@@ -34,6 +34,12 @@ pipeline {
                 sh "mvn test"
             }
         }
+
+        stage('Trivy FS') {
+            steps {
+                sh "trivy fs . > trivy.txt"
+            }
+        }
         
         stage('Sonarqube Analysis') {
             steps {
@@ -55,7 +61,7 @@ pipeline {
             steps {
                 sh "mvn package"
             }
-        }
+        }        
         
         stage('Build Docker Image') {
             steps {
@@ -64,6 +70,12 @@ pipeline {
                         sh "docker build -t santa:latest ."
                     }
                 }
+            }
+        }
+
+        stage('Trivy Image Scan') {
+            steps {
+                sh "trivy image santa:latest"
             }
         }
         
